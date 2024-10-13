@@ -1,81 +1,35 @@
-from Utilidades import primera_letra
 
-class Gramatica:
+from first import computeAllFirsts
+from follow import computeAllFollows
 
-    def __init__(self):
-        """
-        TODO: Docstrings
-        """
-        self.EsLL1 = False
-        #Diccionario con las reglas de la gramatica
-        self.reglas = {}
+def main():
+    gramatica = "S:Q a\nS:P\nQ:c\nP:P x"
+    reglas = {}
+    lines = gramatica.strip().split("\n")
+    for line in lines:
+        # Dividir la producción en lado izquierdo (no terminal) y derecho (producción)
+        lhs, rhs = line.split(":")
+        rhs = rhs.strip().split()  # Dividir la producción en símbolos
 
-    def setear(self, gramatica):
-        reglas = gramatica.split("\n")
-        newReglas = {}
+        # Agregar la producción al diccionario de reglas
+        if lhs not in reglas:
+            reglas[lhs] = []
+        reglas[lhs].append(rhs)
+    
+    print("Gramática:")
+    print(reglas)
 
-    def BuscarFirsts(noTerminalesConSusReglas, terminales):
-        Response = dict()
-        for var in noTerminalesConSusReglas:
-            Response[var] = set()
-        cambio = 1
-        while cambio:
-            cambio = 0
-            for var in noTerminalesConSusReglas:
-                tmp_set = Response[var]
-                for regla in noTerminalesConSusReglas[var]:
-                    Longitud = len(regla)
-                    char = ''
-                    #Recorrer la regla letra por letra
-                    for x in range(Longitud):
-                        char_ = regla[x]
-                        char = char + regla[x]
-                        if (char_.isupper()):
-                            char = ''
-                            tmp_set = tmp_set.union(Response[char_])
-                            if ('lambda' in Response[char_]) and (x != Longitud-1):
-                                tmp_set = tmp_set - {'lambda'}
-                            else:
-                                break
-                        else:
-                            if (char in terminales):
-                                set_terminal = set([char])
-                                tmp_set = tmp_set.union(set_terminal)
-                                break
-                if tmp_set != Response[var]:
-                    Response[var] = tmp_set
-                    cambio = 1
-        return Response
+    # Calculamos los conjuntos First y Follow
+    firsts = computeAllFirsts(reglas)
+    follows = computeAllFollows("S", reglas)
 
-    def BuscarFollows(reglas,terminal,primer_simbolo,primer_variable):
-        Response = dict()
-        for var in reglas:
-            Response[var] = set()
-        cambio = 1
-        while cambio:
-            cambio = 0
-            for var in reglas:
-                tmp_set = Response[var]
-                if (var == primer_simbolo):
-                    tmp_set = tmp_set.union({'$'})
-                for regla in reglas:
-                    for char in reglas[regla]:
-                        if char.find(var) < 0:
-                            continue
-                        elif char.find(var) < len(char)-1:
-                            alpha = char[char.find(var)+1]
-                            if 'lambda' not in primera_letra(alpha, terminal, primer_variable):
-                                tmp_set = tmp_set.union(primera_letra(alpha, terminal, primer_variable))
-                            else:
-                                tmp_set = tmp_set.union(primera_letra(alpha, terminal, primer_variable))
-                                tmp_set = tmp_set - {'lambda'}
-                                tmp_set = tmp_set.union(Response[regla])
-                        else:
-                            tmp_set = tmp_set.union(Response[regla])
-                if tmp_set != Response[var]:
-                    Response[var] = tmp_set
-                    cambio = 1
-        return Response
+    print("Conjuntos First:")
+    for no_terminal, conjunto in firsts.items():
+        print(f"{no_terminal}: {conjunto}")
+    
+    print("\nConjuntos Follow:")
+    for no_terminal, conjunto in follows.items():
+        print(f"{no_terminal}: {conjunto}")
 
-    def BuscarSelects():
-        pass
+if __name__ == "__main__":
+    main()
