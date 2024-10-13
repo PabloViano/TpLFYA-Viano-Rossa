@@ -1,16 +1,11 @@
 from first import first
 
-#Calcular conjunto follows para un no terminal especifico
-#start_symbol (primer no terminal en las reglas) non_terminal (no terminal al que se le calcula el conjunto follows) prods (diccionario con la gramatica)
 def follow(start_symbol, non_terminal, prods):
     solset = set()
-    #Si el no terminal es el primero en la gramatica, le agrego $
     if non_terminal == start_symbol:
         solset.add('$')
-    #Recorro todos los no terminales para ver si el no terminal esta en alguna regla
     for curr_non_terminal in prods:
         rhs = prods[curr_non_terminal]
-        #Busco en cada regla
         for subrule in rhs:
             if non_terminal in subrule:
                 while non_terminal in subrule:
@@ -35,14 +30,11 @@ def follow(start_symbol, non_terminal, prods):
                     else:
                         if non_terminal != curr_non_terminal:
                             res = follow(start_symbol, curr_non_terminal, prods)
-                    #El resultado no es none
+
                     if res is not None:
-                        #Verifico el tipo de la variable
                         if type(res) is list:
-                            #Agrego cada elemento de la lista al conjunto
                             for g in res:
                                 solset.add(g)
-                        #Si es un unico elemto lo agrego directamente
                         else:
                             solset.add(res)
     return list(solset)
