@@ -35,11 +35,14 @@ def follow(start_symbol, non_terminal, prods):
                     else:
                         if non_terminal != curr_non_terminal:
                             res = follow(start_symbol, curr_non_terminal, prods)
-
+                    #El resultado no es none
                     if res is not None:
+                        #Verifico el tipo de la variable
                         if type(res) is list:
+                            #Agrego cada elemento de la lista al conjunto
                             for g in res:
                                 solset.add(g)
+                        #Si es un unico elemto lo agrego directamente
                         else:
                             solset.add(res)
     return list(solset)

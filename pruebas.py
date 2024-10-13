@@ -5,8 +5,8 @@
 #for regla in reglas:
 #    ant, con = regla.split(":")
 #    print("Antecedente: ", ant , "Consecuente: ", con)
-
-from Utilidades import Utilidades
+from first import computeAllFirsts
+from follow import computeAllFollows
 
 production = {'S': ['a Q', 'R b'], 'Q': ['b S', 'c R'], 'R': ['S d','lambda']
 }
